@@ -1,0 +1,29 @@
+activemq:
+  brokerUrl: tcp://127.0.0.1:61616
+  sessionCacheSize: 10
+  cacheConsumers: false
+
+integration:
+  requestQueue: DEV.QUEUE.1
+  responseTopic: trades.input
+
+filter:
+  expression: payload.contains('test')
+
+spring:
+  kafka:
+    producer:
+      bootstrap-servers: 127.0.0.1:9092
+      batch-size: 16384
+      buffer-memory: 33554432
+      retries: 0
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+  ibm:
+    mq:
+      queueManager: QM1
+      channel: DEV.ADMIN.SVRCONN
+      connName: localhost(1414)
+      user: admin
+      password: passw0rd
