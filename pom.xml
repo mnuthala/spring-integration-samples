@@ -16,6 +16,7 @@
         <spring-integration-kafka.version>3.0.3.RELEASE</spring-integration-kafka.version>
         <activemq-kahadb.version>5.15.6</activemq-kahadb.version>
         <javax-jms.version>2.0.1</javax-jms.version>
+        <mq-jms.version>2.0.5</mq-jms.version>
     </properties>
 
     <build>
@@ -31,8 +32,9 @@
         </plugins>
     </build>
     <modules>
-        <module>scraper</module>
-        <module>kafka-integration-channel</module>
+        <!--module>scraper</module>
+        <module>kafka-integration-channel</module -->
+        <module>mq-kafka-integration</module>
         <module>activemq-kafka-integration</module>
     </modules>
 
@@ -73,6 +75,16 @@
                 <groupId>javax.jms</groupId>
                 <artifactId>javax.jms-api</artifactId>
                 <version>${javax-jms.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ibm.mq</groupId>
+                <artifactId>mq-jms-spring-boot-starter</artifactId>
+                <version>${mq-jms.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ibm.mq</groupId>
+                <artifactId>com.ibm.mq.allclient</artifactId>
+                <version>9.1.0.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
