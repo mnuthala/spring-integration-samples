@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>activemq-kafka-integration</artifactId>
+    <artifactId>mq-kafka-integration</artifactId>
 
     <dependencies>
         <dependency>

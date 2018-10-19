@@ -1,14 +1,11 @@
 package com.mark.integration;
 
-import com.ibm.mq.jms.MQQueue;
-import org.apache.activemq.command.ActiveMQQueue;
+
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
@@ -21,19 +18,16 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.MessageChannel;
 
+import javax.jms.Queue;
+
 /**
  * Created by mark on 17/10/2018.
  */
 @SpringBootApplication
-public class AmqAdapterToKafkaApp implements CommandLineRunner{
+public class MqAdapterToKafkaApp {
     public static void main(String[] args) {
-        ConfigurableApplicationContext context = new SpringApplicationBuilder(AmqAdapterToKafkaApp.class).run(args);
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(MqAdapterToKafkaApp.class).run(args);
         //SpringApplication.run(AmqAdapterApp.class, args);
-    }
-
-    @Override
-    public void run(String... strings){
-
     }
 
     @Bean
@@ -55,38 +49,16 @@ public class AmqAdapterToKafkaApp implements CommandLineRunner{
                 .get();
     }
 
-    @Profile("activemq")
     @Bean
-    public IntegrationFlow fromStdInputChannelToActiveMQ(JmsTemplate jmsTemplate, ActiveMQQueue requestQueue){
+    public IntegrationFlow fromStdInputChannelToMQ(JmsTemplate jmsTemplate, Queue requestQueue){
         return IntegrationFlows.from("jmsInputChannel")
                 //.log(LoggingHandler.Level.INFO)
                 .handle(Jms.outboundAdapter(jmsTemplate).destination(requestQueue))
                 .get();
     }
 
-    @Profile("activemq")
-    @Bean IntegrationFlow fromActiveMQToKafkaInputChannel(CachingConnectionFactory connectionFactory,
-                                                          ActiveMQQueue requestQueue,
-                                                          @Value("${filter.expression}") String expression) {
-        return IntegrationFlows.from(Jms.messageDrivenChannelAdapter(connectionFactory).destination(requestQueue))
-                //.log(LoggingHandler.Level.INFO)
-                .filter(expression)
-                .channel("kafkaInputChannel")
-                .get();
-    }
-
-    @Profile("!activemq")
-    @Bean
-    public IntegrationFlow fromStdInputChannelToIbmMQ(JmsTemplate jmsTemplate, MQQueue requestQueue){
-        return IntegrationFlows.from("jmsInputChannel")
-                //.log(LoggingHandler.Level.INFO)
-                .handle(Jms.outboundAdapter(jmsTemplate).destination(requestQueue))
-                .get();
-    }
-
-    @Profile("!activemq")
-    @Bean IntegrationFlow fromIbmMQToKafkaInputChannel(CachingConnectionFactory connectionFactory,
-                                                          MQQueue requestQueue,
+    @Bean IntegrationFlow fromMQToKafkaInputChannel(CachingConnectionFactory connectionFactory,
+                                                          Queue requestQueue,
                                                           @Value("${filter.expression}") String expression) {
         return IntegrationFlows.from(Jms.messageDrivenChannelAdapter(connectionFactory).destination(requestQueue))
                 //.log(LoggingHandler.Level.INFO)
